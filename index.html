@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Афиша Бали: куда пойти сегодня</title>
+<meta name="description" content="Вечеринки, нетворкинги, практики, мастер-классы, игры и встречи на Бали на сегодня и неделю. Собрано из чатов острова, у каждого события ссылка на сообщение в Telegram.">
+<meta name="theme-color" content="#0a0707">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Афиша Бали: куда пойти сегодня">
+<meta property="og:description" content="События острова на сегодня и неделю: вечеринки, нетворкинги, практики, игры. Обновляется само.">
+<meta property="og:image" content="https://arturleto.github.io/afisha-bali/og.jpg">
+<meta property="og:url" content="https://arturleto.github.io/afisha-bali/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230a0707'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%23ff9a3c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Forum&family=Onest:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav">
+  <a class="logo" href="#top"><i></i>Афиша Бали</a>
+  <nav class="nav__links">
+    <a href="#week" data-ru="Неделя" data-en="Week">Неделя</a>
+    <a href="#free" data-ru="Бесплатно" data-en="Free">Бесплатно</a>
+    <a href="#places" data-ru="Куда пойти всегда" data-en="Always worth it">Куда пойти всегда</a>
+  </nav>
+  <div class="nav__tools">
+    <div class="lang"><button data-lang-btn="ru" class="is-on">RU</button><button data-lang-btn="en">EN</button></div>
+    <button class="icon-btn" data-theme-toggle aria-label="Сменить тему">
+      <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+    </button>
+    <button class="btn-cta" data-open="add"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg><span data-ru="Добавить событие" data-en="Add event">Добавить событие</span></button>
+  </div>
+</header>
+
+<section class="stage" id="top">
+  <div class="bgs" id="bgs"></div>
+  <div class="wrap">
+    <button class="ad" data-open="ads">
+      <span class="ad__tag" data-ru="Реклама" data-en="Ad">Реклама</span>
+      <span><span class="ad__t" data-ru="Ваш постер в этой карусели" data-en="Your poster in this carousel">Ваш постер в этой карусели</span><span class="ad__s" data-ru="Промо события на выбранный день, первым в кольце" data-en="Promote your event on the day you need, first in the ring">Промо события на выбранный день, первым в кольце</span></span>
+      <span class="btn-cta" data-ru="Разместить" data-en="Advertise">Разместить</span>
+    </button>
+    <h2 class="tagline" id="tagline">Куда пойти на Бали сегодня</h2>
+    <div class="stage__filters">
+      <div class="stage__row">
+        <div class="chips" id="whenRow"></div>
+        <label class="switch"><input type="checkbox" id="freeOnly"><span data-ru="Только бесплатные" data-en="Free only">Только бесплатные</span></label>
+      </div>
+      <div class="chips chips--scroll" id="areaRowTop"></div>
+    </div>
+    <div class="stage__grid">
+      <div class="info">
+        <div class="date swap" id="dateBox"></div>
+        <h1 class="swap" id="infoTitle">Афиша Бали</h1>
+        <p class="info__sum swap" id="infoSum"></p>
+        <dl class="table swap" id="infoTable"></dl>
+        <div class="actions swap" id="infoActions"></div>
+      </div>
+      <div class="ring-box" id="ringBox" aria-label="Карусель событий">
+        <div class="ring" id="ring"></div>
+        <div class="ring-nav">
+          <button class="icon-btn" id="prev" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m15 18-6-6 6-6"/></svg></button>
+          <span id="pos">0 / 0</span>
+          <button class="icon-btn" id="next" aria-label="Вперёд"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 18 6-6-6-6"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <a class="scroll-hint" href="#week"><i></i><span data-ru="Вся неделя ниже" data-en="The whole week below">Вся неделя ниже</span></a>
+  </div>
+</section>
+
+<main>
+  <section class="sec wrap" id="week">
+    <div class="sec__head">
+      <div><p class="sec__kicker" id="weekKicker">Неделя</p><h2 data-ru="Неделя на острове" data-en="The week on the island">Неделя на острове</h2></div>
+      <p class="sec__lead" id="weekLead"></p>
+    </div>
+    <div class="days7" id="days7"></div>
+    <div class="dock" id="dock">
+      <div class="chips chips--scroll" id="catRow"></div>
+      <div class="chips chips--scroll" id="areaRow"></div>
+    </div>
+    <div id="days"></div>
+  </section>
+
+  <section class="sec wrap" id="free">
+    <div class="sec__head">
+      <div><p class="sec__kicker" data-ru="Без билета" data-en="No ticket">Без билета</p><h2 data-ru="Бесплатно на этой неделе" data-en="Free this week">Бесплатно на этой неделе</h2></div>
+      <div class="big-n" id="freeN">0</div>
+    </div>
+    <div class="strip" id="freeStrip"></div>
+  </section>
+
+  <section class="sec wrap" id="places">
+    <div class="sec__head">
+      <div><p class="sec__kicker" data-ru="Рубрика" data-en="Section">Рубрика</p><h2 data-ru="Куда пойти всегда" data-en="Always worth it">Куда пойти всегда</h2></div>
+      <p class="sec__lead" data-ru="Постоянные места острова: бары, студии, маркеты, кафе. Подборка по районам для тех, кто выбирает, куда пойти." data-en="The island's regular spots: bars, studios, markets, cafes. Picked by area for people choosing where to go.">Постоянные места острова: бары, студии, маркеты, кафе. Подборка по районам для тех, кто выбирает, куда пойти.</p>
+    </div>
+    <div class="places">
+      <div class="places__card">
+        <b style="font-size:20px" data-ru="Что получает место" data-en="What a venue gets">Что получает место</b>
+        <ul>
+          <li><i>1</i><span data-ru="Карточка в рубрике своего района с фото, адресом и ссылкой" data-en="A card in its area with photo, address and link">Карточка в рубрике своего района с фото, адресом и ссылкой</span></li>
+          <li><i>2</i><span data-ru="События места попадают в афишу и карусель автоматически" data-en="The venue's events land in the feed and carousel automatically">События места попадают в афишу и карусель автоматически</span></li>
+          <li><i>3</i><span data-ru="Видят те, кто прямо сейчас решает, куда пойти вечером" data-en="Seen by people deciding where to go tonight">Видят те, кто прямо сейчас решает, куда пойти вечером</span></li>
+        </ul>
+      </div>
+      <button class="ad" data-open="ads">
+        <span class="ad__tag" data-ru="Реклама" data-en="Ad">Реклама</span>
+        <span class="serif" style="font-size:clamp(30px,3.4vw,44px);line-height:1.05" data-ru="Ваше место первым в своём районе" data-en="Your venue first in its area">Ваше место первым в своём районе</span>
+        <span class="ad__s" data-ru="Бар, йога-студия, маркет или кафе" data-en="Bar, yoga studio, market or cafe">Бар, йога-студия, маркет или кафе</span>
+        <span class="btn-cta" data-ru="Разместить место" data-en="List your venue">Разместить место</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="final wrap">
+    <div>
+      <h2 data-ru="Проводите событие?" data-en="Hosting an event?">Проводите событие?</h2>
+      <p data-ru="Анонс из чатов Бали попадает в афишу сам. Хотите точно и с постером, пришлите его нам." data-en="Announcements from Bali chats land here on their own. Want it for sure, with a poster? Send it to us.">Анонс из чатов Бали попадает в афишу сам. Хотите точно и с постером, пришлите его нам.</p>
+      <button class="btn-cta" data-open="add" data-ru="Добавить событие" data-en="Add event">Добавить событие</button>
+    </div>
+  </section>
+</main>
+
+<footer class="foot wrap">
+  <div class="foot__row">
+    <span class="foot__upd"><i></i><span id="updText">Обновляется само</span></span>
+    <span data-ru="События собраны из открытых чатов Telegram. Фото на обложках: организаторы событий." data-en="Events are collected from public Telegram chats. Cover photos: event hosts.">События собраны из открытых чатов Telegram. Фото на обложках: организаторы событий.</span>
+  </div>
+  <div class="wordmark" aria-hidden="true">Афиша Бали</div>
+</footer>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"><div class="sheet__box"><button class="icon-btn sheet__close" data-close aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6 6 18"/></svg></button><div id="sheetBody"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
