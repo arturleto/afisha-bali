@@ -37,13 +37,14 @@
   let events = [], meta = {};
 
   const WD_MATCH = [/воскрес|\bвс\b/i, /понедел|\bпн\b/i, /вторник|\bвт\b/i, /сред|\bср\b/i, /четверг|\bчт\b/i, /пятниц|\bпт\b/i, /суббот|\bсб\b/i];
-  function nextRecurring(rec) {
-    if (/ежеднев|кажд\w*\s*день|каждодн|\bdaily\b/i.test(rec)) return today;
+  function nextRecurring(rec, from) {
+    const base = from || today;
+    if (/ежеднев|кажд[а-яё]*\s*день|каждодн|\bdaily\b/i.test(rec)) return base;
     let days = WD_MATCH.map((re, i) => (re.test(rec) ? i : -1)).filter((i) => i >= 0);
     if (!days.length && /выходн|\bweekend/i.test(rec)) days = [0, 6];
-    if (!days.length && /будн|рабоч\w*\s*дн|\bweekday/i.test(rec)) days = [1, 2, 3, 4, 5];
+    if (!days.length && /будн|рабоч[а-яё]*\s*дн|\bweekday/i.test(rec)) days = [1, 2, 3, 4, 5];
     if (!days.length) return null;
-    for (let k = 0; k < 7; k++) { const d = new Date(today.getTime() + k * DAY); if (days.includes(d.getDay())) return d; }
+    for (let k = 0; k < 7; k++) { const d = new Date(base.getTime() + k * DAY); if (days.includes(d.getDay())) return d; }
     return null;
   }
 
@@ -70,7 +71,12 @@
       if (d < today) return;
       e._i = i; e._d = d; e._key = ymd(d);
       const st = startMs(e);
-      if (e._key === ymd(today) && st && !e.date_end && Date.now() - st > 3 * 3600000) return;
+      if (e._key === ymd(today) && st && !e.date_end && Date.now() - st > 3 * 3600000) {
+        // регулярное сегодня уже прошло: показываем следующий раз, а не прячем совсем
+        const nx = e.recurring ? nextRecurring(e.recurring, new Date(today.getTime() + DAY)) : null;
+        if (!nx) return;
+        e._d = nx; e._key = ymd(nx);
+      }
       out.push(e);
     });
     out.sort((a, b) => a._d - b._d || String(a.time || '99').localeCompare(String(b.time || '99')));
