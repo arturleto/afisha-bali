@@ -36,7 +36,9 @@
   let today = parse(ymd(baliNow()));
   let events = [], meta = {};
 
-  const WD_MATCH = [/воскрес|\bвс\b/i, /понедел|\bпн\b/i, /вторник|\bвт\b/i, /сред|\bср\b/i, /четверг|\bчт\b/i, /пятниц|\bпт\b/i, /суббот|\bсб\b/i];
+  // \b в JS не видит русские буквы (\bвт\b не находит «вт и чт»), поэтому границу слова пишем руками
+  const wd = (long, short) => new RegExp(`${long}|(^|[^а-яё])${short}([^а-яё]|$)`, 'i');
+  const WD_MATCH = [wd('воскрес', 'вс'), wd('понедел', 'пн'), wd('вторник', 'вт'), wd('сред', 'ср'), wd('четверг', 'чт'), wd('пятниц', 'пт'), wd('суббот', 'сб')];
   function nextRecurring(rec, from) {
     const base = from || today;
     if (/ежеднев|кажд[а-яё]*\s*день|каждодн|\bdaily\b/i.test(rec)) return base;
@@ -65,16 +67,20 @@
       e.audience = e.audience || [];
       let d = e.date ? parse(e.date) : null;
       const end = e.date_end ? parse(e.date_end) : null;
-      if (e.recurring) { const n = nextRecurring(e.recurring); if (n) d = n; }
+      // регулярное с датой старта в будущем считаем от неё, а не от сегодня: курс с 1 декабря не показываем в ноябре
+      if (e.recurring) { const n = nextRecurring(e.recurring, d && d > today ? d : null); if (n) d = n; }
+      // конец курса: date_end дальше недели от старта. После него занятий нет (короткий date_end это один выезд, не конец)
+      const until = e.recurring && end && e.date && end - parse(e.date) >= 7 * DAY ? end : null;
+      if (until && d > until) return;
       if (!d) return;
       if (end && end >= today && d < today) d = today;
       if (d < today) return;
       e._i = i; e._d = d; e._key = ymd(d);
       const st = startMs(e);
-      if (e._key === ymd(today) && st && !e.date_end && Date.now() - st > 3 * 3600000) {
+      if (e._key === ymd(today) && st && (!e.date_end || e.recurring) && Date.now() - st > 3 * 3600000) {
         // регулярное сегодня уже прошло: показываем следующий раз, а не прячем совсем
         const nx = e.recurring ? nextRecurring(e.recurring, new Date(today.getTime() + DAY)) : null;
-        if (!nx) return;
+        if (!nx || (until && nx > until)) return;
         e._d = nx; e._key = ymd(nx);
       }
       out.push(e);
