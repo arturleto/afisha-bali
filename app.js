@@ -170,7 +170,7 @@
     const det = t.closest('[data-detail]'); if (det && !t.closest('a')) { openDetail(det.dataset.detail); return; }
     const op = t.closest('[data-open]'); if (op) { openForm(op.dataset.open); return; }
     const sh = t.closest('[data-share]');
-    if (sh) { const e = A.events.find((x) => x._i === +sh.dataset.share); const data = { title: A.title(e), text: A.title(e) + ' · ' + A.dayLabel(e._d), url: e.source_tg_message_url }; if (navigator.share) navigator.share(data).catch(() => {}); else { try { navigator.clipboard.writeText(data.url); toast(T('Ссылка скопирована', 'Link copied')); } catch (err) {} } return; }
+    if (sh) { const e = A.events.find((x) => x._i === +sh.dataset.share); const data = { title: A.title(e), text: A.title(e) + ' · ' + A.dayLabel(e._d), url: location.origin + location.pathname + '#e=' + eid(e) }; if (navigator.share) navigator.share(data).catch(() => {}); else { try { navigator.clipboard.writeText(data.url); toast(T('Ссылка скопирована', 'Link copied')); } catch (err) {} } return; }
     const j = t.closest('[data-jump]'); if (j) { const el = $('d-' + j.dataset.jump); if (el) { if (window.__lenis) window.__lenis.scrollTo(el, { offset: -170 }); else el.scrollIntoView({ behavior: 'smooth' }); } return; }
     const b = t.closest('[data-when],[data-area],[data-cat],[data-lang-btn]');
     if (!b) return;
@@ -208,6 +208,12 @@
   }
   function tagline() { const n = A.stats().today; $('tagline').innerHTML = T(`Куда пойти на Бали <em>сегодня</em> · ${A.nEvents(n)}`, `Where to go in Bali <em>today</em> · ${A.nEvents(n)}`); }
   function render() { tagline(); chipsWhen(); chipsArea('areaRowTop', false); buildRing(); week(); free(); updText(); }
+  // ссылка «Поделиться» ведёт на афишу, а не в чужой чат: метка события по посту и названию, не по номеру в списке (он меняется)
+  function eid(e) { let h = 7; for (const c of String(e.source_tg_message_url) + '|' + String(e.title_ru)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h.toString(36); }
+  function openFromHash() {
+    const m = /^#e=([a-z0-9]+)$/.exec(location.hash || ''); if (!m) return;
+    const e = A.events.find((x) => eid(x) === m[1]); if (e) openDetail(e._i);
+  }
   async function fetchData(first) {
     try {
       const r = await fetch('events.json?t=' + Date.now(), { cache: 'no-store' });
@@ -216,6 +222,7 @@
       builtAt = j.meta && j.meta.updated;
       A.load(j.events, j.meta);
       render();
+      if (first) openFromHash();
     } catch (e) { if (first) $('infoTitle').textContent = T('Не удалось загрузить афишу. Обновите страницу.', 'Could not load events. Refresh the page.'); }
   }
   A.setLang(S.lang);
