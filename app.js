@@ -142,7 +142,7 @@
       <h3>${E(A.title(e))}</h3>
       <dl class="table"><div><dt>${T('Когда', 'When')}</dt><dd>${E(A.dayLabel(e._d))}${A.timeText(e) ? ' · ' + E(A.timeText(e)) : ''}</dd></div><div><dt>${T('Где', 'Where')}</dt><dd>${E(A.placeText(e) || T('у организатора', 'ask the host'))}</dd></div><div><dt>${T('Вход', 'Entry')}</dt><dd><span class="price ${p.cls}">${E(p.text)}</span></dd></div></dl>
       <p>${E(A.summary(e))}</p>
-      <div class="actions">${A.buttons(e)}</div>
+      <div class="actions">${A.buttons(e, { map: true })}</div>
       <div class="detail__more"><a class="btn-chat" href="${A.ics(e)}" download="afisha-bali.ics">${T('В календарь', 'Add to calendar')}</a><button class="btn-chat" data-share="${e._i}">${T('Поделиться', 'Share')}</button></div>
       <p style="font-size:13px;color:var(--faint)">${T('Источник', 'Source')}: ${E(e.source_chat_title || e.source_tg_chat_url)}</p></div></div>`);
   }

@@ -160,7 +160,19 @@
     if (!opts.compact) h += `<a class="btn-chat" href="${esc(e.source_tg_chat_url)}" target="_blank" rel="noopener">${T('Чат целиком', 'Whole chat')}</a>`;
     if (e.ticket_url) h += `<a class="btn-ticket" href="${esc(e.ticket_url)}" target="_blank" rel="noopener">${T('Купить билет', 'Tickets')}</a>`;
     else if (e.contact && !opts.compact) h += `<a class="btn-chat" href="https://t.me/${esc(String(e.contact).replace(/^@/, '').split(/\s/)[0])}" target="_blank" rel="noopener">${T('Написать организатору', 'Message host')}</a>`;
+    const q = mapQuery(e);
+    if (q && opts.map) h += `<a class="btn-chat" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}" target="_blank" rel="noopener">${T('На карте', 'On the map')}</a>`;
     return h;
+  }
+  // запрос для карты: только если место названо конкретно, а не «кафе» или район
+  const GENERIC_PLACE = ['кафе', 'ресторан', 'бар', 'вилла', 'студия', 'пляж', 'онлайн', 'online'];
+  function mapQuery(e) {
+    const pl = String(e.place || '').trim(), ar = String(e.area || '').trim();
+    if (pl.length < 3 || GENERIC_PLACE.includes(pl.toLowerCase())) return '';
+    if (ar && pl.toLowerCase() === ar.toLowerCase()) return '';
+    if (/(^|[\s,])(центр|атмосферн|уютн|кафе|студи|вилл|ресторан)/i.test(pl) || /secret place/i.test(pl)) return '';
+    const withArea = ar && ar !== 'другое' && !pl.toLowerCase().includes(ar.toLowerCase().slice(0, 4));
+    return pl + (withArea ? ', ' + ar : '') + (/bali|бали/i.test(pl) ? '' : ', Bali');
   }
 
   // файл календаря .ics для события
