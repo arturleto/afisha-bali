@@ -175,15 +175,25 @@
     return pl + (withArea ? ', ' + ar : '') + (/bali|бали/i.test(pl) ? '' : ', Bali');
   }
 
-  // файл календаря .ics для события
+  // файл календаря .ics для события. Время не указано: событие на весь день, а не выдуманные 10:00.
+  // Есть время конца: берём его; конец раньше начала значит после полуночи.
   function ics(e) {
     const p = (n) => String(n).padStart(2, '0');
-    const d = e._d, [h, m] = (e.time || '10:00').split(':').map(Number);
-    const st = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), h - 8, m || 0));
-    const en = new Date(st.getTime() + 2 * 3600000);
+    const hm = (s) => { const r = /^(\d{1,2}):(\d{2})$/.exec(String(s || '').trim()); return r && +r[1] < 24 && +r[2] < 60 ? [+r[1], +r[2]] : null; };
+    const d = e._d, t0 = hm(e.time), t1 = hm(e.time_end);
     const f = (x) => `${x.getUTCFullYear()}${p(x.getUTCMonth() + 1)}${p(x.getUTCDate())}T${p(x.getUTCHours())}${p(x.getUTCMinutes())}00Z`;
+    const fd = (x) => `${x.getFullYear()}${p(x.getMonth() + 1)}${p(x.getDate())}`;
+    let when;
+    if (t0) {
+      const st = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), t0[0] - 8, t0[1]));
+      let en = t1 ? new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), t1[0] - 8, t1[1])) : new Date(st.getTime() + 2 * 3600000);
+      if (en <= st) en = new Date(en.getTime() + DAY);
+      when = [`DTSTART:${f(st)}`, `DTEND:${f(en)}`];
+    } else {
+      when = [`DTSTART;VALUE=DATE:${fd(d)}`, `DTEND;VALUE=DATE:${fd(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1))}`];
+    }
     const txt = (s) => String(s || '').replace(/[,;\\]/g, (c) => '\\' + c).replace(/\n/g, ' ');
-    const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//afisha-bali//RU', 'BEGIN:VEVENT', `UID:${hash(e.source_tg_message_url + e.title_ru)}@afisha-bali`, `DTSTAMP:${f(new Date())}`, `DTSTART:${f(st)}`, `DTEND:${f(en)}`, `SUMMARY:${txt(e.title_ru)}`, `LOCATION:${txt(placeText(e))}`, `DESCRIPTION:${txt(e.summary_ru + ' ' + e.source_tg_message_url)}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//afisha-bali//RU', 'BEGIN:VEVENT', `UID:${hash(e.source_tg_message_url + e.title_ru)}@afisha-bali`, `DTSTAMP:${f(new Date())}`, ...when, `SUMMARY:${txt(e.title_ru)}`, `LOCATION:${txt(placeText(e))}`, `DESCRIPTION:${txt(e.summary_ru + ' ' + e.source_tg_message_url)}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
     return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(body);
   }
 
