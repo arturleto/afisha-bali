@@ -202,14 +202,21 @@
     return { week: week.length, today: events.filter((e) => diffDays(e) === 0).length, free: week.filter(isFree).length, chats: meta.chats_read || 0 };
   }
 
+  // Полоса браузера на телефоне в цвет темы (цвета = --bg из style.css)
+  function paintBar(t) {
+    const m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute('content', t === 'light' ? '#f7f1e8' : '#0a0707');
+  }
   function initTheme() {
     let t = 'dark';
     try { t = localStorage.getItem('afisha-theme') || 'dark'; } catch (e) {}
     const q = /[?&]theme=(light|dark)/.exec(location.search || ''); if (q) t = q[1];
     document.documentElement.dataset.theme = t;
+    paintBar(t);
     document.querySelectorAll('[data-theme-toggle]').forEach((b) => b.addEventListener('click', () => {
       const n = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
       document.documentElement.dataset.theme = n;
+      paintBar(n);
       try { localStorage.setItem('afisha-theme', n); } catch (e) {}
     }));
   }
