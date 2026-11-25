@@ -99,7 +99,7 @@
   // ---------- неделя ----------
   function card(e) {
     const p = A.price(e);
-    return `<button class="ev" data-detail="${e._i}"><div class="ev__img"><img src="${E(A.img(e))}" alt="" loading="lazy"><span class="price ${p.cls}">${E(p.text)}</span><div class="ev__time">${e.time ? `<b>${E(e.time)}</b>` : ''}${e.recurring ? `<b>${E(e.recurring)}</b>` : ''}</div></div><div class="ev__b"><span class="ev__c">${E(A.catName(e.category || ''))}</span><span class="ev__t" style="display:block">${E(A.title(e))}</span><p class="ev__p">${E(A.placeText(e) || A.timeText(e))}</p></div></button>`;
+    return `<button class="ev" data-detail="${e._i}"><div class="ev__img"><img src="${E(A.img(e))}" alt="" loading="lazy" decoding="async"><span class="price ${p.cls}">${E(p.text)}</span><div class="ev__time">${e.time ? `<b>${E(e.time)}</b>` : ''}${e.recurring ? `<b>${E(e.recurring)}</b>` : ''}</div></div><div class="ev__b"><span class="ev__c">${E(A.catName(e.category || ''))}</span><span class="ev__t" style="display:block">${E(A.title(e))}</span><p class="ev__p">${E(A.placeText(e) || A.timeText(e))}</p></div></button>`;
   }
   function week() {
     const days = [];
@@ -110,7 +110,7 @@
     const wd = S.lang === 'en' ? A.WD_EN : A.WD_SHORT;
     $('days7').innerHTML = days.map((d, k) => {
       const key = A.ymd(d), items = byKey[key] || [];
-      const stack = items.slice(0, 4).map((e) => `<img src="${E(A.img(e))}" alt="" loading="lazy">`).join('');
+      const stack = items.slice(0, 4).map((e) => `<img src="${E(A.img(e))}" alt="" loading="lazy" decoding="async">`).join('');
       return `<button class="d7 ${items.length ? '' : 'is-empty'}" data-jump="${key}"><small>${k === 0 ? T('сегодня', 'today') : k === 1 ? T('завтра', 'tmrw') : wd[d.getDay()]}</small><b>${d.getDate()}</b><em>${A.nEvents(items.length)}</em><span class="d7__stack">${stack}</span></button>`;
     }).join('');
     chipsCat(); chipsArea('areaRow', true);
