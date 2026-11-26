@@ -132,8 +132,11 @@
   }
 
   // ---------- окна ----------
-  function openSheet(html) { $('sheetBody').innerHTML = html; $('sheet').classList.add('is-open'); document.body.style.overflow = 'hidden'; if (window.__lenis) window.__lenis.stop(); }
-  function closeSheet() { $('sheet').classList.remove('is-open'); document.body.style.overflow = ''; if (window.__lenis) window.__lenis.start(); }
+  // кнопка и жест «назад» на телефоне закрывают окно, а не уводят с сайта: окно кладёт свою запись в историю
+  function openSheet(html) { $('sheetBody').innerHTML = html; if (!$('sheet').classList.contains('is-open') && !(history.state && history.state.sheet)) { try { history.pushState({ sheet: 1 }, ''); } catch (err) {} } $('sheet').classList.add('is-open'); document.body.style.overflow = 'hidden'; if (window.__lenis) window.__lenis.stop(); }
+  function hideSheet() { $('sheet').classList.remove('is-open'); document.body.style.overflow = ''; if (window.__lenis) window.__lenis.start(); }
+  function closeSheet() { if (history.state && history.state.sheet) history.back(); else hideSheet(); }
+  addEventListener('popstate', () => { if ($('sheet').classList.contains('is-open')) hideSheet(); });
   function openDetail(i) {
     const e = A.events.find((x) => x._i === +i); if (!e) return;
     const p = A.price(e);
