@@ -133,8 +133,9 @@
 
   // ---------- окна ----------
   // кнопка и жест «назад» на телефоне закрывают окно, а не уводят с сайта: окно кладёт свою запись в историю
-  function openSheet(html) { $('sheetBody').innerHTML = html; if (!$('sheet').classList.contains('is-open') && !(history.state && history.state.sheet)) { try { history.pushState({ sheet: 1 }, ''); } catch (err) {} } $('sheet').classList.add('is-open'); document.body.style.overflow = 'hidden'; if (window.__lenis) window.__lenis.stop(); }
-  function hideSheet() { $('sheet').classList.remove('is-open'); document.body.style.overflow = ''; if (window.__lenis) window.__lenis.start(); }
+  let sheetBack = null;
+  function openSheet(html) { $('sheetBody').innerHTML = html; if (!$('sheet').classList.contains('is-open') && !(history.state && history.state.sheet)) { try { history.pushState({ sheet: 1 }, ''); } catch (err) {} } if (!$('sheet').classList.contains('is-open')) sheetBack = document.activeElement; $('sheet').classList.add('is-open'); document.body.style.overflow = 'hidden'; if (window.__lenis) window.__lenis.stop(); try { $('sheet').querySelector('.sheet__close').focus({ preventScroll: true }); } catch (err) {} }
+  function hideSheet() { $('sheet').classList.remove('is-open'); document.body.style.overflow = ''; if (window.__lenis) window.__lenis.start(); const b = sheetBack; sheetBack = null; if (b && b.isConnected && b.focus) { try { b.focus({ preventScroll: true }); } catch (err) {} } }
   function closeSheet() { if (history.state && history.state.sheet) history.back(); else hideSheet(); }
   addEventListener('popstate', () => { if ($('sheet').classList.contains('is-open')) hideSheet(); });
   function openDetail(i) {
