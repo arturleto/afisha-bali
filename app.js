@@ -9,17 +9,17 @@
 
   // ---------- фильтры ----------
   function chipsWhen() {
-    $('whenRow').innerHTML = WHEN.map(([k, ru, en]) => `<button class="chip ${S.when === k ? 'is-on' : ''}" data-when="${k}">${T(ru, en)} <small>${A.filtered({ when: k }).length}</small></button>`).join('');
+    $('whenRow').innerHTML = WHEN.map(([k, ru, en]) => `<button class="chip ${S.when === k ? 'is-on' : ''}" aria-pressed="${S.when === k}" data-when="${k}">${T(ru, en)} <small>${A.filtered({ when: k }).length}</small></button>`).join('');
   }
   function chipsArea(id, sm) {
     const has = new Set(A.events.map((e) => e.area));
-    $(id).innerHTML = `<button class="chip ${sm ? 'chip--sm' : ''} ${S.area === 'all' ? 'is-on' : ''}" data-area="all">${T('Весь остров', 'Whole island')}</button>` +
-      A.AREAS.filter((a) => has.has(a)).map((a) => `<button class="chip ${sm ? 'chip--sm' : ''} ${S.area === a ? 'is-on' : ''}" data-area="${a}">${A.areaName(a)} <small>${A.filtered({ area: a, cat: 'all' }).length}</small></button>`).join('');
+    $(id).innerHTML = `<button class="chip ${sm ? 'chip--sm' : ''} ${S.area === 'all' ? 'is-on' : ''}" aria-pressed="${S.area === 'all'}" data-area="all">${T('Весь остров', 'Whole island')}</button>` +
+      A.AREAS.filter((a) => has.has(a)).map((a) => `<button class="chip ${sm ? 'chip--sm' : ''} ${S.area === a ? 'is-on' : ''}" aria-pressed="${S.area === a}" data-area="${a}">${A.areaName(a)} <small>${A.filtered({ area: a, cat: 'all' }).length}</small></button>`).join('');
   }
   function chipsCat() {
     const list = [['all', T('Все', 'All')], ['women', T('Для женщин', 'For women')], ['kids', T('Для детей', 'For kids')]]
       .concat(A.CATS.filter((c) => c !== 'Для детей').map((c) => [c, A.catName(c)]));
-    $('catRow').innerHTML = list.map(([k, name]) => { const n = A.filtered({ cat: k }).length; return n || k === 'all' || S.cat === k ? `<button class="chip chip--sm ${S.cat === k ? 'is-on' : ''}" data-cat="${E(k)}">${E(name)} <small>${n}</small></button>` : ''; }).join('');
+    $('catRow').innerHTML = list.map(([k, name]) => { const n = A.filtered({ cat: k }).length; return n || k === 'all' || S.cat === k ? `<button class="chip chip--sm ${S.cat === k ? 'is-on' : ''}" aria-pressed="${S.cat === k}" data-cat="${E(k)}">${E(name)} <small>${n}</small></button>` : ''; }).join('');
   }
 
   // ---------- карусель ----------

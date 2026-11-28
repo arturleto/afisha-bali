@@ -225,7 +225,7 @@
     try { localStorage.setItem('afisha-state', JSON.stringify({ lang: l })); } catch (e) {}
     document.documentElement.lang = l;
     document.querySelectorAll('[data-ru]').forEach((el) => { el.textContent = l === 'en' ? el.dataset.en : el.dataset.ru; });
-    document.querySelectorAll('[data-lang-btn]').forEach((b) => b.classList.toggle('is-on', b.dataset.langBtn === l));
+    document.querySelectorAll('[data-lang-btn]').forEach((b) => { b.classList.toggle('is-on', b.dataset.langBtn === l); b.setAttribute('aria-pressed', String(b.dataset.langBtn === l)); });
   }
 
   window.Afisha = {
